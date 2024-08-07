@@ -1,6 +1,7 @@
 #!/usr/bin/python3 -u
 
 import os
+from pathlib import Path
 import sys
 
 cpp_path = ['codes/cpp/sssp-cpp/', 'codes/cpp/bfs-cpp/', 'codes/cpp/cc-cpp/', 'codes/cpp/mis-cpp/', 'codes/cpp/pr-cpp/', 'codes/cpp/tc-cpp/']
@@ -9,7 +10,7 @@ algorithms = ['sssp', 'bfs', 'cc', 'mis', 'pr', 'tc']
 inputs_folder = 'inputs/'
 out_dir = 'throughputs/'
 cpp_out = 'throughputs/cpp/'
-graph_names = ['soc-LiveJournal1.egr']
+graph_names = ['internet.egr']
 total_num_cpp = 176
 counter = 0
 
@@ -53,9 +54,30 @@ if __name__ == "__main__":
                             sys.stdout.flush()
                             f.write('\ncompile : %s\n' % code_file)
                             sys.stdout.flush()
-                            os.system('g++ %s -O3 -pthread -Iinclude -o minibenchmark' % file_path)
+                            print("CWD: " , os.getcwd())
+                            print("file_path: ", file_path)
+                            print("__file__: ", __file__)
+                            include_dir = os.path.join(Path(__file__).parent.parent.absolute(), "include")
+                            print("include dir: ", include_dir)
+
+                            DISCOPOP = True
+                            if not DISCOPOP:
+                                os.system('g++ %s -O3 -pthread -I%s -o minibenchmark' % (file_path, include_dir))
+                            else:
+                                project_root_dir = Path(__file__).parent.parent.absolute()
+                                print("EXECUTING: " + 'DP_PROJECT_ROOT_DIR=%s discopop_cxx %s -pthread -I%s -o minibenchmark' % (project_root_dir, file_path, include_dir))
+                                os.system('DP_PROJECT_ROOT_DIR=%s discopop_cxx %s -S -emit-llvm -pthread -I%s -o minibenchmark.ll' % (project_root_dir, file_path, include_dir))
+                                os.system("rm -rf .discopop")
+                                os.system('DP_PROJECT_ROOT_DIR=%s discopop_cxx %s -pthread -I%s -o minibenchmark' % (project_root_dir, file_path, include_dir))
                             if 'sssp' in code_path or 'bfs' in code_path:
-                                os.system('./minibenchmark %s %s %s %s >> %s' % (input_path, source, verify, thread_count, out_name))
+                                print("thread_count: ", thread_count)
+                                thread_count = 1
+                                print("--> Set to 1 for compatibility with DiscoPoP")
+                                # print('Executing: ./minibenchmark %s %s %s %s >> %s' % (input_path, source, verify, thread_count, out_name))
+                                #os.system('./minibenchmark %s %s %s %s >> %s' % (input_path, source, verify, thread_count, out_name))
+                                print('Executing: ./minibenchmark %s %s %s %s' % (input_path, source, verify, thread_count))
+                                os.system('./minibenchmark %s %s %s %s' % (input_path, source, verify, thread_count))
+                                sys.exit(0)
                             elif 'pr' in code_path:
                                 os.system('./minibenchmark %s %s >> %s' % (input_path, thread_count, out_name))
                             else:
