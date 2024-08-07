@@ -121,7 +121,6 @@ if __name__ == "__main__":
                             # DiscoPoP environment reset
                             #  - delete the created .discopop directory
                             shutil.rmtree(".discopop")
-                            sys.exit(0)
 
                             # cleanup
                             if os.path.isfile('minibenchmark'):
