@@ -1,2 +1,17 @@
+sssp topology-driven CPP (/home/lukas/git/Parallelization-Artifact-SC23/include/sssp_edge_cpp.h)
+input graph: 124651 nodes and 387240 edges
+input: inputs/internet.egr
+nodes: 124651
+edges: 387240
+source: 0
+Threads: 1
+iterations: 25
+iterations: 25
+iterations: 25
+runtime: 12.402512s
+Throughput: 0.000031 gigaedges/s
+vertex 40023 has maximum distance 6836
+turn off verification
+
 
 compile : SSSP_CPP_E_Topo_IntType_ReadModifyWrite_Block_NonDeterm_NoBoundsBug_Atomic_NoRangeBug.cpp

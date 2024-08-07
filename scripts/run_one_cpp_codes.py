@@ -86,46 +86,44 @@ if __name__ == "__main__":
 
                             # execute the instrumented program
                             if 'sssp' in code_path or 'bfs' in code_path:
-                                # print('Executing: ./minibenchmark %s %s %s %s >> %s' % (input_path, source, verify, thread_count, out_name))
-                                #os.system('./minibenchmark %s %s %s %s >> %s' % (input_path, source, verify, thread_count, out_name))
-                                
-                                # DiscoPoP instrumented execution
-                                print('Executing: ./minibenchmark %s %s %s %s' % (input_path, source, verify, thread_count))
-                                os.system('./minibenchmark %s %s %s %s' % (input_path, source, verify, thread_count))
-
-                                # DiscoPoP output organization
-                                #  - create folder for the current code
-                                output_folder = os.path.join(discopop_out_dir, code_file)
-                                os.mkdir(output_folder)
-                                #  - move the relevant files to the created folder
-                                shutil.move(os.path.join(".discopop", "profiler", "static_dependencies.txt"), output_folder)
-                                shutil.move(os.path.join(".discopop", "profiler", "dynamic_dependencies.txt"), output_folder)
-                                shutil.move(os.path.join(".discopop", "FileMapping.txt"), output_folder)
-                                shutil.move("minibenchmark.ll", output_folder)
-                                #  - prepare the identified static and dynamic dependencies for use in PerfoGraph
-                                convert_dependency_file(
-                                        PerfoGraphCompatibilityArguments(llvm_ir_file=os.path.join(output_folder, "minibenchmark.ll"),
-                                                                        dynamic_deps_file=os.path.join(output_folder, "dynamic_dependencies.txt"),
-                                                                        output_file=os.path.join(output_folder, "converted_dynamic_dependencies.txt"),
-                                                                        force_output=False,
-                                                                        log_level="INFO",
-                                                                        write_log=False))
-                                convert_dependency_file(
-                                        PerfoGraphCompatibilityArguments(llvm_ir_file=os.path.join(output_folder, "minibenchmark.ll"),
-                                                                        dynamic_deps_file=os.path.join(output_folder, "static_dependencies.txt"),
-                                                                        output_file=os.path.join(output_folder, "converted_static_dependencies.txt"),
-                                                                        force_output=False,
-                                                                        log_level="INFO",
-                                                                        write_log=False))
-                                # DiscoPoP environment reset
-                                #  - delete the created .discopop directory
-                                shutil.rmtree(".discopop")
-
+                                print('Executing: ./minibenchmark %s %s %s %s >> %s' % (input_path, source, verify, thread_count, out_name))
+                                os.system('./minibenchmark %s %s %s %s >> %s' % (input_path, source, verify, thread_count, out_name))
                             elif 'pr' in code_path:
                                 os.system('./minibenchmark %s %s >> %s' % (input_path, thread_count, out_name))
                             else:
                                 os.system('./minibenchmark %s %s %s >> %s' % (input_path, verify, thread_count, out_name))
                             sys.stdout.flush()
+
+                            # DiscoPoP output organization
+                            #  - create folder for the current code
+                            output_folder = os.path.join(discopop_out_dir, code_file)
+                            os.mkdir(output_folder)
+                            #  - move the relevant files to the created folder
+                            shutil.move(os.path.join(".discopop", "profiler", "static_dependencies.txt"), output_folder)
+                            shutil.move(os.path.join(".discopop", "profiler", "dynamic_dependencies.txt"), output_folder)
+                            shutil.move(os.path.join(".discopop", "FileMapping.txt"), output_folder)
+                            shutil.move("minibenchmark.ll", output_folder)
+                            #  - prepare the identified static and dynamic dependencies for use in PerfoGraph
+                            convert_dependency_file(
+                                    PerfoGraphCompatibilityArguments(llvm_ir_file=os.path.join(output_folder, "minibenchmark.ll"),
+                                                                    dynamic_deps_file=os.path.join(output_folder, "dynamic_dependencies.txt"),
+                                                                    output_file=os.path.join(output_folder, "converted_dynamic_dependencies.txt"),
+                                                                    force_output=False,
+                                                                    log_level="INFO",
+                                                                    write_log=False))
+                            convert_dependency_file(
+                                    PerfoGraphCompatibilityArguments(llvm_ir_file=os.path.join(output_folder, "minibenchmark.ll"),
+                                                                    dynamic_deps_file=os.path.join(output_folder, "static_dependencies.txt"),
+                                                                    output_file=os.path.join(output_folder, "converted_static_dependencies.txt"),
+                                                                    force_output=False,
+                                                                    log_level="INFO",
+                                                                    write_log=False))
+                            # DiscoPoP environment reset
+                            #  - delete the created .discopop directory
+                            shutil.rmtree(".discopop")
+                            sys.exit(0)
+
+                            # cleanup
                             if os.path.isfile('minibenchmark'):
                                 os.system('rm minibenchmark')
                             else:
